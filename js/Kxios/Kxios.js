@@ -3,32 +3,14 @@ import {
   mergeConfig
 } from './utils'
 
-// let obj1 = {
-//   baseURL: '',
-//   url: '',
-//   method: 'get',
-//   data: {
-//     x: 1,
-//     y:2
-//   },
-//   arr:[1,2,3]
-// }
-// //深拷贝
-// let obj2 = deepCopy(obj1);
-// obj2.url = 'abc';
-// obj2.data.z=10
-// console.log(obj1)
+import InterceptorManager from './interceptorManager'
 
 class Kxios {
   constructor(config) {
     this.defaults = deepCopy(config);
     this.interceptors = {
-      request: {
-        use() {
-          
-        }
-      },
-      response:{}
+      request: new InterceptorManager,
+      response:new InterceptorManager
     }
    
 
@@ -38,18 +20,45 @@ class Kxios {
     //把get传入的配置与对象默认配置进行整合
   
     let configs = mergeConfig(this.defaults, config)
-    configs.url=url
+    configs.url = url;
+    let promise = Promise.resolve(configs);
+   
+    this.interceptors.request.handlers.forEach((handler) => {
+      //不能立即执行，起到链式操作的目的
+     
+      promise=promise.then( handler.resolvedHandler,handler.rejectedHandler)
+     
+    })
+
+    promise = promise.then(this.dispatch, undefined);
+
+    this.interceptors.response.handlers.forEach((handler) => {
+      //不能立即执行，起到链式操作的目的
+     
+      promise=promise.then( handler.resolvedHandler,handler.rejectedHandler)
+     
+    })
+   
+      return promise
+  }
+
+  dispatch(configs) {
     return new Promise((resolve, reject) => {
       let xhr = new XMLHttpRequest();
       xhr.onload = function () {
-        resolve(xhr.responseText)
+        let responseJson = {
+          statusCode: xhr.statusCode,
+          statusText: xhr.statusText,
+          data:xhr.responseText
+       }
+        resolve(responseJson)
 
       }
-      xhr.open('get', this.defaults.baseURL + this.defaults.url, true);
+      xhr.open('get', configs.baseURL + configs.url, true);
       xhr.send()
 
     })
-
+    
   }
 
 }

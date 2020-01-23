@@ -15,9 +15,9 @@ function deepCopy(source) {
 }
 
 function mergeConfig(obj1, obj2) {
-  console.log(obj1)
+
   let target = deepCopy(obj1);
-  console.log(target)
+  
   let source = deepCopy(obj2);
 
   Object.keys(source).reduce((t, k) => {
@@ -30,7 +30,7 @@ function mergeConfig(obj1, obj2) {
 
       // t[k] = Object.assign(target[k], source[k]);
       t[k] = Object.assign(target[k], source[k]);
-      console.log(t)
+     
     }
 
     return t
