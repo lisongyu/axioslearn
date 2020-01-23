@@ -1,0 +1,19 @@
+{
+  "name": "kaxios",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel ./axios.html",
+    "start1": "parcel ./kaxios.html"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.1",
+    "koa": "^2.11.0",
+    "koa-router": "^7.4.0"
+  }
+}
